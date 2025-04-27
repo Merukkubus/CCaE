@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Code Executor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Выполнить код</h1>
+
+    <label>Выберите версию Python:</label>
+    <select id="python-version">
+    <!-- Сюда будут динамически подгружаться версии -->
+    </select>
+
+    <textarea id="code-input" placeholder="Введите Python-код..."></textarea>
+    <button onclick="executeCode()">Запустить</button>
+
+    <h3>Вывод:</h3>
+    <pre id="output"></pre>
+
+    <h2>Установить библиотеку</h2>
+    <input type="text" id="package-name" placeholder="Название пакета">
+    <button onclick="installPackage()">Установить</button>
+
+    <h3>Результат установки:</h3>
+    <pre id="install-output"></pre>
+
+    <script src="script.js"></script>
+</body>
+</html>
