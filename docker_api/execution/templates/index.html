@@ -1,32 +1,41 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Code Executor</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Выполнить код</h1>
+{% extends 'base.html' %}
 
-    <label>Выберите версию Python:</label>
-    <select id="python-version">
-    <!-- Сюда будут динамически подгружаться версии -->
-    </select>
+{% block title %}Главная{% endblock %}
 
-    <textarea id="code-input" placeholder="Введите Python-код..."></textarea>
-    <button onclick="executeCode()">Запустить</button>
+{% block content %}
+<h1>Code Runner</h1>
 
-    <h3>Вывод:</h3>
+<div class="logout-button">
+    <button onclick="logoutUser()">Выйти</button>
+</div>
+
+<div class="form-group">
+    <label for="python-version">Выберите версию Python:</label>
+    <select id="python-version"></select>
+</div>
+
+<div class="form-group">
+    <label for="code">Введите код:</label>
+    <textarea id="code" rows="10" placeholder="print('Hello, world!')"></textarea>
+</div>
+
+<button id="execute-btn">Выполнить код</button>
+
+<div class="form-group">
+    <h2>Результат выполнения:</h2>
     <pre id="output"></pre>
+</div>
 
-    <h2>Установить библиотеку</h2>
-    <input type="text" id="package-name" placeholder="Название пакета">
-    <button onclick="installPackage()">Установить</button>
+<hr>
 
-    <h3>Результат установки:</h3>
+<div class="form-group">
+    <label for="package">Установить пакет:</label>
+    <input type="text" id="package" placeholder="Например, numpy">
+    <button id="install-btn">Установить пакет</button>
+</div>
+
+<div class="form-group">
+    <h2>Результат установки:</h2>
     <pre id="install-output"></pre>
-
-    <script src="script.js"></script>
-</body>
-</html>
+</div>
+{% endblock %}

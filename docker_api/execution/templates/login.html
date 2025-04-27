@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<h1>Вход в систему</h1>
+
+<div id="login-section">
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" placeholder="Введите имя пользователя">
+
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" placeholder="Введите пароль">
+
+    <button onclick="loginUser()">Войти</button>
+</div>
+{% endblock %}

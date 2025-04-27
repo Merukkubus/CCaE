@@ -1,14 +1,16 @@
 import time
 import docker
+import shlex
 
 client = docker.from_env()
 
 def run_code_in_docker(python_version, code):
     start_time = time.time()
+    safe_code = shlex.quote(code)
     try:
         container = client.containers.run(
             f'python:{python_version}-slim',
-            command=f'python3 -c "{code}"',
+            command=f'python3 -c {safe_code}',
             detach=True,
             stdout=True,
             stderr=True

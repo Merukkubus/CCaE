@@ -4,10 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import CodeExecution, PythonVersion
 from .serializers import CodeExecutionSerializer
 from .docker_runner import run_code_in_docker, install_package_in_docker
-
 
 from .models import PythonVersion  # <-- Импортируем модель PythonVersion
 
