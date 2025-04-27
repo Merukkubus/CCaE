@@ -1,10 +1,26 @@
 import time
-import docker
 import shlex
+import docker
+from docker.errors import DockerException
 
-client = docker.from_env()
+_docker_client = None
+
+def get_docker_client():
+    global _docker_client
+    if _docker_client is None:
+        _docker_client = docker.from_env()
+    else:
+        try:
+            # Пытаемся запросить версию сервера — если клиент мертвый, упадем
+            _docker_client.version()
+        except DockerException:
+            print("Docker client is dead. Reinitializing...")
+            _docker_client = docker.from_env()
+    return _docker_client
+
 
 def run_code_in_docker(python_version, code):
+    client = get_docker_client()  # <<<<< получаем клиента здесь
     start_time = time.time()
     safe_code = shlex.quote(code)
     try:
@@ -33,8 +49,8 @@ def run_code_in_docker(python_version, code):
 
     return logs, execution_time
 
-
 def install_package_in_docker(python_version, package):
+    client = get_docker_client()  # <<<<< получаем клиента здесь
     try:
         container = client.containers.run(
             f'python:{python_version}-slim',
@@ -48,7 +64,7 @@ def install_package_in_docker(python_version, package):
     except docker.errors.APIError as e:
         return f"Error: {str(e)}", False
 
-    container.wait()  # Ждем окончания установки
+    container.wait()
 
     logs = container.logs(stdout=True, stderr=True, stream=False).decode()
 
@@ -58,13 +74,11 @@ def install_package_in_docker(python_version, package):
     except docker.errors.APIError as e:
         logs += f"\nError stopping/removing container: {str(e)}"
 
-    # Чистим вывод для пользователя:
     success = False
     final_message = ""
 
     if "Successfully installed" in logs:
         success = True
-        # Ищем строку с успешной установкой
         lines = logs.splitlines()
         for line in lines:
             if "Successfully installed" in line:

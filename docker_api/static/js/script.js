@@ -69,10 +69,17 @@ async function executeCode() {
 
         let result = await response.json();
         let outputField = document.getElementById('output');
+        let executionTimeField = document.getElementById('execution-time'); // <--- сюда
 
         Swal.close();
 
         outputField.textContent = result.output;
+
+        if (executionTimeField) {
+            executionTimeField.textContent = result.execution_time !== null
+                ? `⏱ Время выполнения: ${result.execution_time} сек.`
+                : '';
+        }
 
         if (response.ok && result.output && result.output.includes('Traceback')) {
             Swal.fire({ icon: 'error', title: 'Ошибка выполнения кода!', text: 'Проверьте код.' });
