@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<h1>Регистрация</h1>
+
+<div class="form-group">
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" placeholder="Введите имя пользователя">
+</div>
+
+<div class="form-group">
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" placeholder="Введите пароль">
+</div>
+
+<div class="form-group">
+    <label for="confirm-password">Подтверждение пароля:</label>
+    <input type="password" id="confirm-password" placeholder="Повторите пароль">
+</div>
+
+<button id="register-btn">Зарегистрироваться</button>
+
+<div class="form-group" style="margin-top: 15px;">
+    <p>Уже есть аккаунт? <a href="/login/">Войти</a></p>
+</div>
+
+<script>
+document.getElementById('register-btn').addEventListener('click', async () => {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirm-password').value.trim();
+
+    if (!username || !password || !confirmPassword) {
+        Swal.fire({ icon: 'error', title: 'Ошибка', text: 'Заполните все поля!' });
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        Swal.fire({ icon: 'error', title: 'Ошибка', text: 'Пароли не совпадают!' });
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/register/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Регистрация прошла успешно!',
+                text: 'Теперь вы можете войти',
+                confirmButtonText: 'Перейти к входу'
+            }).then(() => window.location.href = '/login/');
+        } else {
+            let message = data.detail || 'Ошибка регистрации';
+            if (data.username) message = `Имя пользователя: ${data.username.join(', ')}`;
+            Swal.fire({ icon: 'error', title: 'Ошибка', text: message });
+        }
+    } catch (err) {
+        console.error(err);
+        Swal.fire({ icon: 'error', title: 'Ошибка', text: 'Не удалось связаться с сервером' });
+    }
+});
+</script>
+{% endblock %}

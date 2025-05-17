@@ -1,17 +1,16 @@
 import traceback
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .serializers import CodeExecutionSerializer
+from .serializers import CodeExecutionSerializer, RegisterSerializer
 from .docker_runner import run_code_in_docker, install_package_in_docker
-
-from .models import PythonVersion  # <-- Импортируем модель PythonVersion
+from .models import PythonVersion
 
 class ExecuteCodeView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request):
         print("Authenticated user:", request.user)
@@ -41,8 +40,8 @@ class ExecuteCodeView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class InstallPackageView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request):
         try:
@@ -74,6 +73,18 @@ class InstallPackageView(APIView):
             return Response({"error": str(e), "traceback": error_log}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PythonVersionListView(APIView):
+    permission_classes = [AllowAny]  # Это открытый эндпоинт
+    authentication_classes = []
     def get(self, request):
-        versions = PythonVersion.objects.filter(is_active=True).values_list('version', flat=True)
-        return Response({"versions": list(versions)})
+            versions = PythonVersion.objects.filter(is_active=True).values_list('version', flat=True)
+            return Response({"versions": list(versions)})
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Пользователь успешно зарегистрирован'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
