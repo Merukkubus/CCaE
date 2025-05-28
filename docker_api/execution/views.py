@@ -42,14 +42,26 @@ class ExecuteCodeView(APIView):
             docker_name = lang.docker_name.lower()
             docker_image = f"{docker_name}:{version}"
 
-            if docker_name == "python":
+            if docker_name == "python": # Python
                 run_cmd = "python3 /tmp/main.txt"
                 file_ext = "txt"
                 compile_cmd = None
-            elif docker_name == "gcc":
+            elif docker_name == "gcc": # C++
                 compile_cmd = "g++ -fno-diagnostics-color /tmp/main.cpp -o /tmp/a.out"
                 run_cmd = "/tmp/a.out"
                 file_ext = "cpp"
+            elif docker_name == "openjdk": # Java
+                compile_cmd = "javac /tmp/Main.java"
+                run_cmd = "java -cp /tmp Main"
+                file_ext = "java"
+            elif docker_name == "golang": # Go
+                compile_cmd = None
+                run_cmd = "go run /tmp/main.go"
+                file_ext = "go"
+            elif docker_name == "node": # Node.js
+                compile_cmd = None
+                run_cmd = "node /tmp/main.js"
+                file_ext = "js"
             else:
                 return Response({"error": f"Language '{lang.name}' not supported yet"}, status=400)
 

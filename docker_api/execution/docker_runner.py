@@ -68,7 +68,8 @@ def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, li
     libs = libs or []
 
     filename = f"main.{file_ext}"
-    container_path = f"/tmp/{filename}"
+    if docker_image.startswith("openjdk"): # Для работы Java нужен файл Main.java
+        filename = "Main.java"
 
     with tempfile.TemporaryDirectory() as temp_dir:
         file_path = os.path.join(temp_dir, filename)
@@ -85,16 +86,16 @@ def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, li
         full_cmd += run_cmd
 
         final_image = docker_image or f"{language}:{version}"
-        print("▶️ Используемый образ:", final_image)
-        print("▶️ Команда запуска:", full_cmd)
+        print("Используемый образ:", final_image)
+        print("Команда запуска:", full_cmd)
 
         try:
-            # 🧲 Пытаемся загрузить образ заранее
+            # загрузить образ заранее
             try:
                 client.images.get(final_image)
-                print("✅ Образ уже есть локально")
+                print("Образ уже есть локально")
             except docker.errors.ImageNotFound:
-                print("⬇️ Образ не найден локально. Подгружаем...")
+                print("Образ не найден локально. Подгружаем...")
                 client.images.pull(final_image)
 
             tar_stream = io.BytesIO()
