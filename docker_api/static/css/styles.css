@@ -125,6 +125,16 @@ input::placeholder {
     box-shadow: 0 0 20px rgba(0,0,0,0.8);
 }
 
+.unselectable {
+    user-select: text;       /* можно копировать */
+    pointer-events: auto;    /* клики разрешены */
+}
+
+.readonly-output {
+    pointer-events: none;
+    user-select: text;
+    caret-color: transparent;
+}
 
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
