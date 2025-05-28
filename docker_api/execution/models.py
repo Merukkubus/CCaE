@@ -17,16 +17,23 @@ class Subscription(models.Model):
 # История выполнения кода
 class CodeExecution(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    language = models.CharField(max_length=10)
+    language_version = models.ForeignKey('LanguageVersion', on_delete=models.SET_NULL, null=True)
     code = models.TextField()
     output = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, default="pending")
     execution_time = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-class PythonVersion(models.Model):
-    version = models.CharField(max_length=10, unique=True)
+class Language(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    docker_name = models.CharField(max_length=50, null=True)
+    def __str__(self):
+        return self.name
+
+class LanguageVersion(models.Model):
+    language = models.ForeignKey(Language, related_name='versions', on_delete=models.CASCADE)
+    version = models.CharField(max_length=20)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.version
+        return f"{self.language.name} {self.version}"

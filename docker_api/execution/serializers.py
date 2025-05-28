@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class CodeExecutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodeExecution
-        fields = ['id', 'language', 'code', 'output', 'status', 'execution_time', 'created_at']  # Убираем `user`
+        fields = ['id', 'language_version', 'code', 'output', 'status', 'execution_time', 'created_at']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user  # Добавляем `user` автоматически
