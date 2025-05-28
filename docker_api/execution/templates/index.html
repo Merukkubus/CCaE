@@ -9,9 +9,10 @@
     <button onclick="logoutUser()">Выйти</button>
 </div>
 
-<div class="form-group">
-    <label for="python-version">Выберите версию Python:</label>
-    <select id="python-version"></select>
+<div class="language-select-row" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+    <select id="language-select" style="flex: 1; padding: 0.5rem;"></select>
+    <select id="version-select" style="flex: 1; padding: 0.5rem;"></select>
+    <button id="lib-btn" style="padding: 0.5rem 1rem;">Установить библиотеки</button>
 </div>
 
 <div class="form-group">
@@ -27,16 +28,15 @@
     <div id="execution-time" style="margin-top: 10px; font-weight: bold;"></div>
 </div>
 
-<hr>
-
-<div class="form-group">
-    <label for="package">Установить пакет:</label>
-    <input type="text" id="package" placeholder="Например, numpy">
-    <button id="install-btn">Установить пакет</button>
-</div>
-
-<div class="form-group">
-    <h2>Результат установки:</h2>
-    <pre id="install-output"></pre>
+<div id="lib-modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeLibModal()">&times;</span>
+    <h2>Установка библиотек</h2>
+    <input id="libs-input" type="text">
+    <div style="margin-top: 1rem; text-align: right;">
+      <button onclick="closeLibModal()">Отмена</button>
+      <button onclick="installPackages()">Установить</button>
+    </div>
+  </div>
 </div>
 {% endblock %}
