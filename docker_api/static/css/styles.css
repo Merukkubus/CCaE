@@ -82,3 +82,22 @@ select#python-version {
 .logout-button button:hover {
     background-color: darkred;
 }
+
+input[type="text"],
+input[type="password"] {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border: 1px solid #444;
+    padding: 10px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}

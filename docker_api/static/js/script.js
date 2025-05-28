@@ -2,14 +2,14 @@ let codeMirrorEditor;
 
 async function loadPythonVersions() {
     try {
-        let response = await fetch('/api/versions/');
-        let data = await response.json();
-        let versionSelect = document.getElementById('python-version');
+        const response = await fetch('/api/versions/');
+        const data = await response.json();
+        const versionSelect = document.getElementById('python-version');
 
         versionSelect.innerHTML = '';
 
         data.versions.forEach(version => {
-            let option = document.createElement('option');
+            const option = document.createElement('option');
             option.value = version;
             option.textContent = `Python ${version}`;
             versionSelect.appendChild(option);
@@ -19,19 +19,48 @@ async function loadPythonVersions() {
     }
 }
 
-window.onload = function() {
-    const isLoginPage = window.location.pathname === '/login/';
+document.addEventListener('DOMContentLoaded', async () => {
+    const path = window.location.pathname;
+    const isLoginPage = path === '/login/' || path === '/login';
+    const isRegisterPage = path === '/register/' || path === '/register';
 
-    if (!localStorage.getItem('access_token') || !localStorage.getItem('refresh_token')) {
-        if (!isLoginPage) {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+
+    // --- Пользователь НЕ авторизован ---
+    if (!accessToken || !refreshToken) {
+        if (!isLoginPage && !isRegisterPage) {
             window.location.href = '/login/';
         }
-    } else {
-        if (isLoginPage) {
-            window.location.href = '/';
-        } else {
-            loadPythonVersions();
+        return;
+    }
 
+    // Проверка валидности токена
+    try {
+        const res = await fetch('/api/versions/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (res.status === 401) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/login/';
+            return;
+        }
+
+        // Если пользователь случайно на login/register
+        if (isLoginPage || isRegisterPage) {
+            window.location.href = '/';
+            return;
+        }
+
+        // Всё хорошо — загружаем редактор и окружение
+        loadPythonVersions();
+
+        if (document.getElementById('code')) {
             codeMirrorEditor = CodeMirror.fromTextArea(document.getElementById('code'), {
                 mode: 'python',
                 theme: 'material-darker',
@@ -46,8 +75,13 @@ window.onload = function() {
             document.getElementById('execute-btn').addEventListener('click', executeCode);
             document.getElementById('install-btn').addEventListener('click', installPackage);
         }
+    } catch (error) {
+        console.error('Ошибка при проверке токена:', error);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login/';
     }
-};
+});
 
 async function executeCode() {
     const version = document.getElementById('python-version').value;
@@ -158,35 +192,6 @@ async function getValidAccessToken() {
             window.location.href = '/login/';
         });
         throw new Error('Token refresh failed');
-    }
-}
-
-async function loginUser() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    try {
-        const response = await fetch('/api/token/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
-
-            Swal.fire({ icon: 'success', title: 'Вы успешно вошли!', timer: 1500, showConfirmButton: false });
-
-            setTimeout(() => { window.location.href = '/'; }, 1500);
-        } else {
-            Swal.fire({ icon: 'error', title: 'Ошибка входа', text: data.detail || 'Неверные учетные данные' });
-        }
-    } catch (error) {
-        console.error('Ошибка логина:', error);
-        Swal.fire({ icon: 'error', title: 'Ошибка сервера', text: 'Не удалось выполнить вход' });
     }
 }
 
