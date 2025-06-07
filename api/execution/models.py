@@ -15,7 +15,7 @@ class Subscription(models.Model):
     subscription_type = models.CharField(max_length=50)
 
 # История выполнения кода
-class CodeExecution(models.Model):
+class UserFacingLogs(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     language_version = models.ForeignKey('LanguageVersion', on_delete=models.SET_NULL, null=True)
     code = models.TextField()
@@ -26,7 +26,7 @@ class CodeExecution(models.Model):
 
 class Language(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    docker_name = models.CharField(max_length=50, null=True)
+    container_name = models.CharField(max_length=50, null=True)
     def __str__(self):
         return self.name
 
@@ -37,3 +37,20 @@ class LanguageVersion(models.Model):
 
     def __str__(self):
         return f"{self.language.name} {self.version}"
+
+class SystemLog(models.Model):
+    LEVEL_CHOICES = [
+        ('INFO', 'Info'),
+        ('WARNING', 'Warning'),
+        ('ERROR', 'Error'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=255)
+    message = models.TextField()
+    level = models.CharField(max_length=10, choices=LEVEL_CHOICES, default='INFO')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        user_display = self.user.username if self.user else 'System'
+        return f"[{self.timestamp:%Y-%m-%d %H:%M:%S}] {self.level} by {user_display} - {self.action}"

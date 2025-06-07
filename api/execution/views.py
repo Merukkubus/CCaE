@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import CodeExecutionSerializer, RegisterSerializer
-from .docker_runner import run_code_generic, install_package_in_docker
-from .models import CodeExecution, Subscription, UserProfile, LanguageVersion, Language
+from .container_runner import run_code_generic, install_package_in_d
+from .models import UserFacingLogs, Subscription, UserProfile, LanguageVersion, Language
 
 
 class ExecuteCodeView(APIView):
@@ -39,26 +39,26 @@ class ExecuteCodeView(APIView):
         if serializer.is_valid():
             code_execution = serializer.save()
 
-            docker_name = lang.docker_name.lower()
-            docker_image = f"{docker_name}:{version}"
+            d_name = lang.container_name.lower()
+            d_image = f"{d_name}:{version}"
 
-            if docker_name == "python": # Python
+            if d_name == "python": # Python
                 run_cmd = "python3 /tmp/main.txt"
                 file_ext = "txt"
                 compile_cmd = None
-            elif docker_name == "gcc": # C++
+            elif d_name == "gcc": # C++
                 compile_cmd = "g++ -fno-diagnostics-color /tmp/main.cpp -o /tmp/a.out"
                 run_cmd = "/tmp/a.out"
                 file_ext = "cpp"
-            elif docker_name == "openjdk": # Java
+            elif d_name == "openjdk": # Java
                 compile_cmd = "javac /tmp/Main.java"
                 run_cmd = "java -cp /tmp Main"
                 file_ext = "java"
-            elif docker_name == "golang": # Go
+            elif d_name == "golang": # Go
                 compile_cmd = None
                 run_cmd = "go run /tmp/main.go"
                 file_ext = "go"
-            elif docker_name == "node": # Node.js
+            elif d_name == "node": # Node.js
                 compile_cmd = None
                 run_cmd = "node /tmp/main.js"
                 file_ext = "js"
@@ -73,7 +73,7 @@ class ExecuteCodeView(APIView):
                 run_cmd=run_cmd,
                 libs=libs,
                 file_ext=file_ext,
-                docker_image=docker_image
+                d_image=d_image
             )
 
             code_execution.output = output
@@ -110,7 +110,7 @@ class InstallPackageView(APIView):
             if lang.name.lower() != "python":
                 return Response({"error": "Package installation only supported for Python"}, status=400)
 
-            final_message, success = install_package_in_docker(version, package)
+            final_message, success = install_package_in_d(version, package)
 
             if success:
                 return Response({

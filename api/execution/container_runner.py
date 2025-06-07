@@ -3,26 +3,26 @@ import os
 import tarfile
 import tempfile
 import time
-import docker
+import docker as d
 from docker.errors import DockerException
 
-_docker_client = None
+_d_client = None
 
-def get_docker_client():
-    global _docker_client
-    if _docker_client is None:
-        _docker_client = docker.from_env()
+def get_d_client():
+    global _d_client
+    if _d_client is None:
+        _d_client = d.from_env()
     else:
         try:
-            _docker_client.version()
+            _d_client.version()
         except DockerException:
-            print("Docker client is dead. Reinitializing...")
-            _docker_client = docker.from_env()
-    return _docker_client
+            print("Container client is dead. Reinitializing...")
+            _d_client = d.from_env()
+    return _d_client
 
 
-def install_package_in_docker(version, package):
-    client = get_docker_client()
+def install_package_in_d(version, package):
+    client = get_d_client()
     try:
         container = client.containers.run(
             f'python:{version}-slim',
@@ -31,9 +31,9 @@ def install_package_in_docker(version, package):
             stdout=True,
             stderr=True
         )
-    except docker.errors.ImageNotFound:
+    except d.errors.ImageNotFound:
         return "Error: Python image not found", False
-    except docker.errors.APIError as e:
+    except d.errors.APIError as e:
         return f"Error: {str(e)}", False
 
     container.wait()
@@ -42,7 +42,7 @@ def install_package_in_docker(version, package):
     try:
         container.stop()
         container.remove()
-    except docker.errors.APIError as e:
+    except d.errors.APIError as e:
         logs += f"\nError stopping/removing container: {str(e)}"
 
     success = False
@@ -62,13 +62,13 @@ def install_package_in_docker(version, package):
     return final_message, success
 
 
-def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, libs=None, file_ext="txt", docker_image=None):
-    client = get_docker_client()
+def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, libs=None, file_ext="txt", d_image=None):
+    client = get_d_client()
     start_time = time.time()
     libs = libs or []
 
     filename = f"main.{file_ext}"
-    if docker_image.startswith("openjdk"): # Для работы Java нужен файл Main.java
+    if d_image.startswith("openjdk"): # Для работы Java нужен файл Main.java
         filename = "Main.java"
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -85,7 +85,7 @@ def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, li
             full_cmd += compile_cmd + " && "
         full_cmd += run_cmd
 
-        final_image = docker_image or f"{language}:{version}"
+        final_image = d_image or f"{language}:{version}"
         print("Используемый образ:", final_image)
         print("Команда запуска:", full_cmd)
 
@@ -94,7 +94,7 @@ def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, li
             try:
                 client.images.get(final_image)
                 print("Образ уже есть локально")
-            except docker.errors.ImageNotFound:
+            except d.errors.ImageNotFound:
                 print("Образ не найден локально. Подгружаем...")
                 client.images.pull(final_image)
 
@@ -125,9 +125,9 @@ def run_code_generic(language, version, code, compile_cmd=None, run_cmd=None, li
 
             return logs, execution_time
 
-        except docker.errors.ContainerError as e:
+        except d.errors.ContainerError as e:
             return f"ContainerError: {str(e)}", 0
-        except docker.errors.APIError as e:
+        except d.errors.APIError as e:
             return f"APIError: {str(e)}", 0
         except Exception as e:
             return f"Unhandled Exception: {str(e)}", 0

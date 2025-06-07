@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import CodeExecution
+from .models import UserFacingLogs
 from django.contrib.auth.models import User
 
 class CodeExecutionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodeExecution
+        model = UserFacingLogs
         fields = ['id', 'language_version', 'code', 'output', 'status', 'execution_time', 'created_at']
 
     def create(self, validated_data):
