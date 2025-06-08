@@ -1,107 +1,195 @@
+/* Базовые настройки */
+html {
+    font-size: 20px;
+}
+
 body {
+    font-size: 1rem;
     background-color: #121212;
     color: #ffffff;
     font-family: 'Arial', sans-serif;
     padding: 20px;
 }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
+/* Центрирующий контейнер */
+.page-content {
+    max-width: 1200px;
+    margin: 100px auto 0 auto;
+    padding: 20px;
 }
 
+/* Заголовки */
 h1, h2 {
+    font-size: 1.6rem;
     text-align: center;
 }
 
+/* Форма и поля */
 .form-group {
     margin-bottom: 20px;
 }
 
-textarea, input, select {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    margin-top: 5px;
-    font-size: 16px;
+select {
     background-color: #1e1e1e;
     color: #ffffff;
+    font-size: 1rem;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+    appearance: none; /* убирает платформенный стиль */
 }
 
+/* Поля ввода */
+input[type="text"],
+input[type="password"],
+textarea {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.4;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    transition: none;
+}
+
+/* Placeholder */
+input::placeholder,
+textarea::placeholder {
+    font-size: 1rem;
+    color: #bbb;
+    transition: none !important;
+}
+
+/* Кнопки */
 button {
-    padding: 10px 20px;
+    font-size: 1rem;
+    padding: 14px 28px;
     background-color: #4CAF50;
     border: none;
     border-radius: 8px;
     color: white;
-    font-size: 16px;
     cursor: pointer;
     margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #45a049;
 }
 
+/* Специально для кнопки запуска */
+#execute-btn {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 20px;
+}
+
+/* Pre / Вывод */
 pre {
+    font-size: 1rem;
     background-color: #1e1e1e;
     padding: 15px;
     border-radius: 8px;
     overflow-x: auto;
 }
 
-select#python-version {
-    width: 200px;
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 20px;
+.readonly-output {
+    pointer-events: none;
+    user-select: text;
+    caret-color: transparent;
+}
+
+/* CodeMirror */
+#code {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.CodeMirror {
+    overflow: auto;
+    width: 100% !important;
+    height: 100% !important;
+    font-size: 1rem;
     background-color: #1e1e1e;
     color: white;
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 16px;
 }
 
-.logout-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+/* Редактор по центру */
+.code-editor-wrapper {
+    width: 1200px;
+    height: 600px;
+    margin: 0 auto;
 }
 
-.logout-button button {
-    background-color: red;
-    padding: 10px 15px;
-    border-radius: 8px;
+/* Верхняя панель (select + кнопка) */
+.top-bar {
+    width: 1200px;
+    margin: 0 auto 1rem auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.select-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.top-bar select {
+    width: 180px;
+    font-size: 1rem;
+    padding: 12px;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #444;
+    z-index: 1000;
+}
+
+.navbar-left {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-btn {
+    background: none;
     border: none;
     color: white;
-    font-size: 16px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    transition: 0.2s;
 }
 
-.logout-button button:hover {
-    background-color: darkred;
+.nav-btn:hover {
+    color: #61dafb;
 }
 
-input[type="text"],
-input[type="password"] {
-    background-color: #2c2c2c;
-    color: #ffffff;
-    border: 1px solid #444;
-    padding: 10px;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
+.nav-title {
+    font-size: 1.3rem;
+    color: white;
+    font-weight: bold;
 }
 
-input::placeholder {
-    color: #aaa;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
+/* Модалка */
 #lib-modal {
     display: none;
     position: fixed;
@@ -110,6 +198,7 @@ input::placeholder {
     z-index: 1000;
     justify-content: center;
     align-items: center;
+    animation: fadeIn 0.2s ease;
 }
 
 #lib-modal.show {
@@ -119,23 +208,95 @@ input::placeholder {
 #lib-modal .modal-content {
     background-color: #1e1e1e;
     padding: 2rem;
-    border-radius: 10px;
+    border-radius: 12px;
     width: 400px;
+    max-width: 90%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
     color: white;
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    animation: fadeIn 0.3s ease;
 }
 
-.unselectable {
-    user-select: text;       /* можно копировать */
-    pointer-events: auto;    /* клики разрешены */
+#lib-modal h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
 }
 
-.readonly-output {
-    pointer-events: none;
-    user-select: text;
-    caret-color: transparent;
+#lib-modal input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    background-color: #2c2c2c;
+    color: white;
 }
 
+/* Модальные кнопки */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-actions button {
+    font-size: 1rem;
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-actions .btn-cancel {
+    background-color: #555;
+    color: white;
+}
+
+.modal-actions .btn-cancel:hover {
+    background-color: #777;
+}
+
+.modal-actions .btn-install {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.modal-actions .btn-install:hover {
+    background-color: #45a049;
+}
+
+/* Авторизационные формы */
+.auth-box {
+    width: 850px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-box button {
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 6px;
+    display: block;
+}
+
+.form-inner {
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Анимация */
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }

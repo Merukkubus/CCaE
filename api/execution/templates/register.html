@@ -5,25 +5,31 @@
 {% block content %}
 <h1>Регистрация</h1>
 
-<div class="form-group">
-    <label for="username">Имя пользователя:</label>
-    <input type="text" id="username" placeholder="Введите имя пользователя">
-</div>
+<div class="auth-box">
+    <div class="form-inner">
 
-<div class="form-group">
-    <label for="password">Пароль:</label>
-    <input type="password" id="password" placeholder="Введите пароль">
-</div>
+        <div class="form-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" placeholder="Введите имя пользователя">
+        </div>
 
-<div class="form-group">
-    <label for="confirm-password">Подтверждение пароля:</label>
-    <input type="password" id="confirm-password" placeholder="Повторите пароль">
-</div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" placeholder="Введите пароль">
+        </div>
 
-<button id="register-btn">Зарегистрироваться</button>
+        <div class="form-group">
+            <label for="confirm-password">Подтверждение пароля:</label>
+            <input type="password" id="confirm-password" placeholder="Повторите пароль">
+        </div>
 
-<div class="form-group" style="margin-top: 15px;">
-    <p>Уже есть аккаунт? <a href="/login/">Войти</a></p>
+        <button id="register-btn">Зарегистрироваться</button>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <p>Уже есть аккаунт? <a href="/login/">Войти</a></p>
+        </div>
+
+    </div>
 </div>
 
 <script>

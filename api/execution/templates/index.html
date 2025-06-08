@@ -3,38 +3,49 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<h1 class="unselectable">Code Runner</h1>
-
-<div class="logout-button">
-    <button onclick="logoutUser()">Выйти</button>
-</div>
-
-<div class="language-select-row" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
-    <select id="language-select" style="flex: 1; padding: 0.5rem;"></select>
-    <select id="version-select" style="flex: 1; padding: 0.5rem;"></select>
-    <button id="lib-btn" style="padding: 0.5rem 1rem;">Установить библиотеки</button>
-</div>
-
-<div class="form-group">
-    <textarea id="code" rows="10"></textarea>
-</div>
-
-<button id="execute-btn">Выполнить код</button>
-
-<div class="form-group">
-    <pre id="output" class="readonly-output"></pre>
-    <div id="execution-time" style="margin-top: 10px; font-weight: bold;"></div>
-</div>
-
-<div id="lib-modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeLibModal()">&times;</span>
-    <h2>Установка библиотек</h2>
-    <input id="libs-input" type="text">
-    <div style="margin-top: 1rem; text-align: right;">
-      <button onclick="closeLibModal()">Отмена</button>
-      <button onclick="installPackages()">Установить</button>
+<div class="navbar">
+    <div class="navbar-left">
+        <button onclick="logoutUser()" class="nav-btn">⇦ ВЫХОД</button>
+        <button id="lib-btn" class="nav-btn">📦 БИБЛИОТЕКИ</button>
     </div>
-  </div>
 </div>
+
+<div class="page-content">
+    <!-- Панель выбора языка -->
+    <div class="editor-section">
+
+        <!-- Верхняя панель с select и кнопкой -->
+        <div class="top-bar">
+            <div class="select-group">
+                <select id="language-select"></select>
+                <select id="version-select"></select>
+            </div>
+            <button id="execute-btn">▶</button>
+        </div>
+
+        <!-- CodeMirror обёртка -->
+        <div class="code-editor-wrapper">
+            <textarea id="code"></textarea>
+        </div>
+    </div>
+
+    <!-- Вывод -->
+    <div class="form-group">
+        <pre id="output" class="readonly-output"></pre>
+        <div id="execution-time" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
+</div>
+
+<!-- Модалка установки библиотек -->
+<div id="lib-modal">
+    <div class="modal-content">
+        <h2>Установка библиотек</h2>
+        <input id="libs-input" type="text" placeholder="Например: numpy, pandas">
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeLibModal()">Отмена</button>
+            <button class="btn-install" onclick="installPackages()">Установить</button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
