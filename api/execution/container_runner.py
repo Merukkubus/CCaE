@@ -21,7 +21,7 @@ def get_d_client():
     return _d_client
 
 
-def install_package_in_d(version, package):
+def install_packages(version, package):
     client = get_d_client()
     try:
         container = client.containers.run(

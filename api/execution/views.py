@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import CodeExecutionSerializer, RegisterSerializer
-from .container_runner import run_code_generic, install_package_in_d
+from .container_runner import run_code_generic, install_packages
 from .models import UserFacingLogs, Subscription, UserProfile, LanguageVersion, Language
 
 
@@ -110,7 +110,7 @@ class InstallPackageView(APIView):
             if lang.name.lower() != "python":
                 return Response({"error": "Package installation only supported for Python"}, status=400)
 
-            final_message, success = install_package_in_d(version, package)
+            final_message, success = install_packages(version, package)
 
             if success:
                 return Response({
